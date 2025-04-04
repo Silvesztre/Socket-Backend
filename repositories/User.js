@@ -19,3 +19,17 @@ exports.registerUser = async (email, password) => {
         throw err
     }
 }
+
+exports.getAllUsers = async () => {
+    try {
+        const users = await prisma.user.findMany()
+
+        if (!users) {
+            throw new AppError("Error getting users", 500)
+        }
+
+        return users
+    } catch (err) {
+        throw err
+    }
+}
