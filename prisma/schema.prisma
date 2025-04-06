@@ -17,4 +17,6 @@ model User {
   userId      String      @id @default(uuid()) @db.Uuid
   email       String      @unique @db.VarChar(72)
   password    String      @db.VarChar(72)
+  username    String      @db.VarChar(72)
+  profileUrl  String      @default("") @db.VarChar(1024)
 }

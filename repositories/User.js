@@ -1,25 +1,6 @@
 const prisma = require('../database/prisma')
 const { AppError } = require('../utils/AppError')
 
-exports.registerUser = async (email, password) => {
-    try {
-        const user = await prisma.user.create({
-            data: {
-                email: email,
-                password: password
-            }
-        })
-
-        if (!user) {
-            throw new AppError("Error registering user", 500)
-        }
-
-        return user
-    } catch (err) {
-        throw err
-    }
-}
-
 exports.getAllUsers = async () => {
     try {
         const users = await prisma.user.findMany()
@@ -29,6 +10,42 @@ exports.getAllUsers = async () => {
         }
 
         return users
+    } catch (err) {
+        throw err
+    }
+}
+
+exports.getUserWithPassword = async (email) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+
+        if (!user) {
+            throw new AppError("Error getting a user", 500)
+        }
+
+        return user
+    } catch (err) {
+        throw err
+    }
+}
+
+exports.getUserById = async (userId) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                userId: userId
+            }
+        })
+
+        if (!user) {
+            throw new AppError("Error getting a user", 500)
+        }
+
+        return user
     } catch (err) {
         throw err
     }
