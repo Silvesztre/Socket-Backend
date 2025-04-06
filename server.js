@@ -14,7 +14,13 @@ app.use(express.json())
 app.use(cookieParser())
 
 // Cors
-app.use(cors());
+const corsOptions = {
+    origin: true,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+};
+app.use(cors(corsOptions));
 
 // Add routes
 const auth = require('./routes/auth')
