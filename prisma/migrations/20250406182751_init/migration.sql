@@ -2,6 +2,17 @@
 CREATE TYPE "MessageType" AS ENUM ('MESSAGE', 'IMAGE');
 
 -- CreateTable
+CREATE TABLE "User" (
+    "userId" UUID NOT NULL,
+    "email" VARCHAR(72) NOT NULL,
+    "password" VARCHAR(72) NOT NULL,
+    "profileUrl" VARCHAR(1024) NOT NULL DEFAULT '',
+    "username" VARCHAR(72) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
 CREATE TABLE "ChatRoom" (
     "chatRoomId" UUID NOT NULL,
     "isGroup" BOOLEAN NOT NULL DEFAULT false,
@@ -32,6 +43,9 @@ CREATE TABLE "_UserChatRooms" (
 
     CONSTRAINT "_UserChatRooms_AB_pkey" PRIMARY KEY ("A","B")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE INDEX "_UserChatRooms_B_index" ON "_UserChatRooms"("B");
