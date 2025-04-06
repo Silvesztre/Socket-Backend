@@ -2,6 +2,9 @@ const User = require('../repositories/User')
 const Auth = require('../repositories/Auth')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const dotenv = require('dotenv')
+
+dotenv.config({ path: '../database/config.env' })
 
 /* POST - /auth/register */
 exports.registerUser = async (req, res, next) => {
@@ -52,6 +55,8 @@ exports.loginUser = async (req, res, next) => {
 
 const sendTokenResponse = (user, statusCode, res) => {
     // Create token
+
+    console.log(process.env.JWT_SECRET)
 
     const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE})
 
