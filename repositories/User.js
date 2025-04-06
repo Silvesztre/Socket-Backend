@@ -1,5 +1,6 @@
+const { compareSync } = require('bcrypt')
 const prisma = require('../database/prisma')
-const { AppError } = require('../utils/AppError')
+const AppError = require('../utils/AppError')
 
 exports.getAllUsers = async () => {
     try {
