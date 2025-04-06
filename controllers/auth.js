@@ -55,9 +55,6 @@ exports.loginUser = async (req, res, next) => {
 
 const sendTokenResponse = (user, statusCode, res) => {
     // Create token
-
-    console.log(process.env.JWT_SECRET)
-
     const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE})
 
     const options = {
