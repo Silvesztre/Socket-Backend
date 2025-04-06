@@ -2,7 +2,7 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
-const cors = require('cors')
+const cors = require('cors');
 
 dotenv.config({ path: './database/config.env' })
 
@@ -14,7 +14,12 @@ app.use(express.json())
 app.use(cookieParser())
 
 // Cors
-app.use(cors())
+const corsOptions ={
+    origin:'http://localhost:3000', 
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 
 // Add routes
 const auth = require('./routes/auth')
