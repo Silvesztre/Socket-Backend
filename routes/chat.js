@@ -11,8 +11,8 @@ const {
 const router = express.Router()
 
 router.post("/", protect, createChatRoom);//tested
-router.get("/:userId", protect, getUserChatroom);//tested
-router.post("/message", protect, createMessage);//tested
+router.get("/chatrooms", protect, getUserChatroom);
+router.post("/message", protect, createMessage);
 router.get("/:chatRoomId/details", protect, getChatRoomByChatRoomId);//tested
 router.post("/addUser", protect, addUserToChatRoom); 
 router.put("/message/:messageId/unsend", protect, unsendMessage);//tested

@@ -42,13 +42,14 @@ exports.createChatRoom = async (req, res, next) => {
 exports.createMessage = async (req,res,next) => {
     try{
         const validMessageTypes = [ 'MESSAGE', 'IMAGE' ];
-        const {chatRoomId, senderId,messageType,content} = req.body;
+        const { chatRoomId, messageType, content } = req.body;
+        const senderId = req.user.userId
         if(!chatRoomId || !senderId || !content || !messageType){
             next(new AppError("Bad request not all required field", 400));
         }
-        if (senderId !== req.user.userId) {
-            return res.status(403).json({ message: 'Forbidden: senderId does not match authenticated user' });
-        }
+        // if (senderId !== req.user.userId) {
+        //     return res.status(403).json({ message: 'Forbidden: senderId does not match authenticated user' });
+        // }
 
         if (!validMessageTypes.includes(messageType)) {
             return res.status(400).json({ message: 'Invalid message type' });
