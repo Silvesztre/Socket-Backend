@@ -84,12 +84,15 @@ exports.createMessage = async (req,res,next) => {
 
 exports.getUserChatroom = async (req,res,next) =>{
     try {
-        const {userId} = req.params
+        const userId= req.user.userId
         if(!userId){
             return next(new AppError("Bad request", 400));
         }
         
         const chatRooms = await getChatRoomsByUserIdAsync(userId)
+
+
+
         res.status(200).json({
             chatRooms
         })
@@ -242,6 +245,10 @@ exports.addUserToChatRoom = async (req, res, next) => {
         const isUserInChatRoom = chatRoom.users.some(user => user.userId === userId);
         if (isUserInChatRoom) {
             return res.status(400).json({ message: "You are already in the chat room." });
+        }
+
+        if(!chatRoom.isGroup){
+            return res.status(400).json({ message: "You cannot join private chat." });
         }
 
 
