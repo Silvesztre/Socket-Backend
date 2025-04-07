@@ -5,3 +5,5 @@ node_modules/*
 database/config.env
 
 vercel.json
+
+socket_programming/*
