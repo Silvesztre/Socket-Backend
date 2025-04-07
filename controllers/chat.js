@@ -7,7 +7,8 @@ const {
     updateMessageAsync,
     unsendMessageAsync,
     getUsersInChatRoomAsync,
-    getMessageByMessageIdAsync
+    getMessageByMessageIdAsync,
+    getAllGroupChatRoomsAsync 
 } = require('../repositories/Chat');const AppError = require('../utils/AppError');
 
 const {getSocketInstance} = require('../socket');
@@ -228,9 +229,9 @@ exports.getUsersInChatRoom = async (req, res, next) => {
 
 exports.addUserToChatRoom = async (req, res, next) => {
     try {
-        const { chatRoomId, userId } = req.body;
-        const currentUserId = req.user.userId;
-        if (!chatRoomId || !userId) {
+        const { chatRoomId} = req.body;
+        const userId = req.user.userId;
+        if (!chatRoomId ) {
             return next(new AppError("Bad request: Must provide chatRoomId and a userId.", 400));
         }
         const chatRoom = await getChatRoomByChatRoomIdAsync(chatRoomId);
@@ -238,14 +239,12 @@ exports.addUserToChatRoom = async (req, res, next) => {
             return next(new AppError("Chat room not found", 404));
         }
 
-        const isUserInChatRoom = chatRoom.users.some(user => user.userId === currentUserId);
-        if (!isUserInChatRoom) {
-            return res.status(401).json({ message: "Unauthorized: You must be in the chat room to add users" });
+        const isUserInChatRoom = chatRoom.users.some(user => user.userId === userId);
+        if (isUserInChatRoom) {
+            return res.status(400).json({ message: "You are already in the chat room." });
         }
 
-        if (chatRoom.users.some(user => user.userId === userId)) {
-            return res.status(400).json({ message: "User is already in the chat room" });
-        }
+
         const updatedChatRoom = await addUserToChatRoomAsync(chatRoomId, userId);
         res.status(200).json({
             success: true,
@@ -253,6 +252,19 @@ exports.addUserToChatRoom = async (req, res, next) => {
         });
 
     } catch (error) {
+        return next(new AppError(err.message || "Internal Server Error", 500)); 
+    }
+};
+
+exports.getAllGroupChatRooms = async (req, res, next) => {
+    try {
+        const groupChatRooms = await getAllGroupChatRoomsAsync();
+
+        res.status(200).json({
+            success: true,
+            data: groupChatRooms
+        });
+    } catch (err) {
         return next(new AppError(err.message || "Internal Server Error", 500)); 
     }
 };

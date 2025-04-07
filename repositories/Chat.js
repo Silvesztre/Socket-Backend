@@ -178,3 +178,29 @@ exports.getMessageByMessageIdAsync = async (messageId) => {
         throw err;
     }
 };
+
+exports.getAllGroupChatRoomsAsync = async () => {
+    try {
+        const groupChatRooms = await prisma.chatRoom.findMany({
+            where: {
+                isGroup: true, 
+            },
+            select: {
+                chatRoomId: true, 
+                groupName: true,
+                users: {
+                    select: {
+                        userId: true,
+                        username: true,
+                    },
+                },
+                createdAt: true,
+            },
+        });
+
+        return groupChatRooms;
+    } catch (err) {
+        console.error('Error fetching group chat rooms:', err);
+        throw new Error('Error fetching group chat rooms: ' + err.message);
+    }
+};
