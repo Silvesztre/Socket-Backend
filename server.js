@@ -3,10 +3,15 @@ const express = require('express')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
-
-dotenv.config({ path: './database/config.env' })
+const http = require('http')
+const { initializeSocket } = require('./socket')
+//dotenv.config({ path: './database/config.env' })
+dotenv.config({ path: './.env' })
 
 const app = express()
+const server = http.createServer(app);
+
+initializeSocket(server);
 
 app.use(express.json())
 
@@ -22,6 +27,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+
 // Add routes
 const auth = require('./routes/auth')
 app.use('/auth', auth)
@@ -29,10 +35,15 @@ app.use('/auth', auth)
 const users = require('./routes/users')
 app.use('/users', users)
 
+const chat = require('./routes/chat')
+app.use('/chat', chat)
 
 const PORT = process.env.PORT || 5000
 
-const server = app.listen(
+
+
+
+server.listen(
     PORT,
     console.log(
         'Server running in ',
