@@ -60,6 +60,9 @@ exports.getChatRoomsByUserIdAsync = async (userId) => {
                 users: {
                     select: {
                         userId: true,
+                        username: true,
+                        email: true,
+                        profileUrl: true
                     }
                 },
                 messages: true,
