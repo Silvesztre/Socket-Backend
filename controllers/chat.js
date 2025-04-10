@@ -9,6 +9,8 @@ const {
   getUsersInChatRoomAsync,
   getMessageByMessageIdAsync,
   getAllGroupChatRoomsAsync,
+  getAllMessages,
+  getMessageById
 } = require("../repositories/Chat");
 const AppError = require("../utils/AppError");
 
@@ -283,3 +285,46 @@ exports.getAllGroupChatRooms = async (req, res, next) => {
     return next(new AppError(err.message || "Internal Server Error", 500));
   }
 };
+
+exports.getAllMessages = async (req, res, next) => {
+  try {
+
+    const messages = await getAllMessages()
+
+    res.status(200).json({
+      success: true,
+      data: messages
+    })
+
+  } catch (err) {
+    return next(new AppError(err.message || "Internal Server Error", 500));
+  }
+}
+
+exports.getMessageById = async (req, res, next) => {
+  try {
+    const messageId = req.params.messageId
+    const userId = req.user.userId
+
+    const message = await getMessageById(messageId)
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found.",
+      });
+    }
+
+    if (message.senderId !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this message",
+      });
+    }
+
+    res.status(200).json({success: true, data: message})
+
+  } catch (err) {
+    return next(new AppError(err.message || "Internal Server Error", 500));
+  }
+}

@@ -8,7 +8,9 @@ const {
     addUserToChatRoom,
     unsendMessage,
     getAllGroupChatRooms,
-    updateMessage
+    updateMessage,
+    getAllMessages,
+    getMessageById
 } = require('../controllers/chat');
 const router = express.Router()
 
@@ -20,4 +22,7 @@ router.post("/addUser", protect, addUserToChatRoom);
 router.put("/message/:messageId/unsend", protect, unsendMessage);//tested
 router.get("/group-chatrooms", protect, getAllGroupChatRooms); 
 router.put("/message/:messageId/update", protect, updateMessage);
+router.get("/message", protect, getAllMessages)
+router.get("/message/:messageId", protect, getMessageById)
+
 module.exports = router

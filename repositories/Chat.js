@@ -204,3 +204,34 @@ exports.getAllGroupChatRoomsAsync = async () => {
         throw new Error('Error fetching group chat rooms: ' + err.message);
     }
 };
+
+exports.getAllMessages = async () => {
+    try {
+        const messages = await prisma.message.findMany()
+
+        return messages
+    } catch (err) {
+        console.error('Error fetching all messages:', err);
+        throw new Error('Error fetching all messages: ' + err.message);
+    }
+}
+
+exports.getMessageById = async (messageId) => {
+    try {
+        const message = await prisma.message.findUnique({
+            where: {
+                messageId: messageId
+            }
+        })
+
+        if (!message) {
+            throw new Error("Message not found.");
+        }
+
+        return message
+
+    } catch (err) {
+        console.error('Error fetching a message:', err);
+        throw new Error('Error fetching a message: ' + err.message);
+    }
+}
