@@ -140,7 +140,8 @@ exports.getChatRoomByChatRoomId = async (req, res, next) => {
 
 exports.updateMessage = async (req, res, next) => {
   try {
-    const { messageId, content } = req.body;
+    const { content } = req.body;
+    const messageId = req.params.messageId
     const userId = req.user.userId;
 
     if (!messageId || !content) {
