@@ -86,7 +86,9 @@ exports.getChatRoomByChatRoomIdAsync = async (chatRoomId) => {
                 users: {
                     select: {
                         userId: true,
-                        username: true, 
+                        username: true,
+                        email: true,
+                        profileUrl: true
                     }
                 },
                 messages: true,  
