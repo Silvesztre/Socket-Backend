@@ -51,3 +51,25 @@ exports.getUserById = async (userId) => {
         throw err
     }
 }
+
+exports.editProfile = async (userId, username, profileUrl) => {
+    try {
+        const user = await prisma.user.update({
+            where: {
+                userId: userId
+            },
+            data: {
+                username,
+                profileUrl
+            }
+        })
+
+        if (!user) {
+            throw new AppError("Error editing user profile", 500)
+        }
+
+        return user
+    } catch (err) {
+        throw err
+    }
+}
