@@ -2,22 +2,47 @@ const prisma = require('../database/prisma');
 const AppError = require('../utils/AppError')
 
 exports.createChatRoomAsync = async (isGroup, groupName, users) => {
-    try{
+    try {
+        if (!isGroup && users.length === 2) {
+            const existingPrivateChat = await prisma.chatRoom.findFirst({
+                where: {
+                    isGroup: false,
+                    AND: [
+                        { users: { some: { userId: users[0] } } },
+                        { users: { some: { userId: users[1] } } },
+                    ],
+                },
+                include: {
+                    users: {
+                        select: {
+                            userId: true
+                        }
+                    }
+                }
+            });
+
+            if (existingPrivateChat && existingPrivateChat.users.length === 2) {
+                return existingPrivateChat;
+            }
+        }
+
         const chatRoom = await prisma.chatRoom.create({
-            data:{
-                isGroup : isGroup,
-                groupName : groupName,
+            data: {
+                isGroup: isGroup,
+                groupName: groupName,
                 users: {
                     connect: users.map(userId => ({ userId }))
                 },
-                createdAt : new Date()
+                createdAt: new Date()
             }
-        })
-        if(!chatRoom){
-            throw new AppError("Error registering user", 500);
+        });
+
+        if (!chatRoom) {
+            throw new AppError("Error creating chat room", 500);
         }
-        return chatRoom
-    }catch(err){
+
+        return chatRoom;
+    } catch (err) {
         throw err;
     }
 }
