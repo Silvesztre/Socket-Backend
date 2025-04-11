@@ -17,7 +17,8 @@ exports.createChatRoomAsync = async (isGroup, groupName, users) => {
                         select: {
                             userId: true
                         }
-                    }
+                    },
+                    messages: true
                 }
             });
 
