@@ -6,6 +6,6 @@ const router = express.Router()
 
 router.post('/register', registerValidator, registerUser)
 router.post('/login', loginValidator, loginUser)
-router.get('/logout', logout)
+router.post('/logout', logout)
 
 module.exports = router
