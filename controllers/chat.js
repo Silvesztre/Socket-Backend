@@ -10,7 +10,7 @@ const {
   getMessageByMessageIdAsync,
   getAllGroupChatRoomsAsync,
   getAllMessages,
-  getMessageById
+  getMessageById,
 } = require("../repositories/Chat");
 const AppError = require("../utils/AppError");
 
@@ -143,7 +143,7 @@ exports.getChatRoomByChatRoomId = async (req, res, next) => {
 exports.updateMessage = async (req, res, next) => {
   try {
     const { content } = req.body;
-    const messageId = req.params.messageId
+    const messageId = req.params.messageId;
     const userId = req.user.userId;
 
     if (!messageId || !content) {
@@ -167,6 +167,11 @@ exports.updateMessage = async (req, res, next) => {
 
     const updatedMessage = await updateMessageAsync(messageId, content);
 
+    const io = getSocketInstance();
+    io.to(message.chatRoomId).emit("updateMessage", {
+      updatedMessage,
+    });
+
     return res.status(200).json({
       success: true,
       data: updatedMessage,
@@ -184,15 +189,8 @@ exports.unsendMessage = async (req, res, next) => {
     if (!messageId) {
       return next(new AppError("Bad request", 400));
     }
+
     const message = await getMessageByMessageIdAsync(messageId);
-
-    if (message.sender.userId !== userId) {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to update this message",
-      });
-    }
-
     if (!message) {
       return res.status(404).json({
         success: false,
@@ -208,6 +206,12 @@ exports.unsendMessage = async (req, res, next) => {
     }
 
     const unsentMessage = await unsendMessageAsync(messageId);
+
+    const io = getSocketInstance();
+    io.to(message.chatRoomId).emit("unsendMessage", {
+      messageId,
+    });
+
     return res.status(200).json({
       success: true,
       data: unsentMessage,
@@ -288,25 +292,23 @@ exports.getAllGroupChatRooms = async (req, res, next) => {
 
 exports.getAllMessages = async (req, res, next) => {
   try {
-
-    const messages = await getAllMessages()
+    const messages = await getAllMessages();
 
     res.status(200).json({
       success: true,
-      data: messages
-    })
-
+      data: messages,
+    });
   } catch (err) {
     return next(new AppError(err.message || "Internal Server Error", 500));
   }
-}
+};
 
 exports.getMessageById = async (req, res, next) => {
   try {
-    const messageId = req.params.messageId
-    const userId = req.user.userId
+    const messageId = req.params.messageId;
+    const userId = req.user.userId;
 
-    const message = await getMessageById(messageId)
+    const message = await getMessageById(messageId);
 
     if (!message) {
       return res.status(404).json({
@@ -322,9 +324,8 @@ exports.getMessageById = async (req, res, next) => {
       });
     }
 
-    res.status(200).json({success: true, data: message})
-
+    res.status(200).json({ success: true, data: message });
   } catch (err) {
     return next(new AppError(err.message || "Internal Server Error", 500));
   }
-}
+};
