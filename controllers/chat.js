@@ -209,7 +209,7 @@ exports.unsendMessage = async (req, res, next) => {
 
     const io = getSocketInstance();
     io.to(message.chatRoomId).emit("unsendMessage", {
-      messageId,
+      unsentMessage,
     });
 
     return res.status(200).json({
